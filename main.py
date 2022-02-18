@@ -4,6 +4,7 @@ from yolov5_new.tt_api import get_qi_info,get_quan_info
 import time, sys
 
 model = DetectApi(weights=['.\\yolov5_new\\weights\\best.pt'], nosave=False)
+print('识别模型加载完毕')
 dj = Start()  # 初始化飞机对象
 
 # try:

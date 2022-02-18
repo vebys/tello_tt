@@ -7,7 +7,7 @@ import time , operator
 
 def get_qi_info(model,img_path):
     result = dict()
-    res1 = model.detect(source=img_path,conf_thres=0.2)
+    res1 = model.detect(source=img_path,conf_thres=0.3)
     # res2 = model.detect(source='..\\tt_data\\test\\img\\1.2-2.jpg',conf_thres=0.4)
     # res3 = model.detect(source='..\\tt_data\\test\\img\\1.3.jpg',conf_thres=0.4)
     # res4 = model.detect(source='..\\tt_data\\test\\img\\1.45-1.jpg',conf_thres=0.4)
@@ -85,13 +85,13 @@ def get_qi_info(model,img_path):
 
 def get_quan_info(model,img_path):
     result = dict()
-    res1 = model.detect(source=img_path,conf_thres=0.2)
+    res1 = model.detect(source=img_path,conf_thres=0.3)
     # res1 = model.detect(source='..\\tello_tt_yolov5\\img\\1.2.jpg',conf_thres=0.4)
     # res2 = model.detect(source='..\\tello_tt_yolov5\\img\\1.2-2.jpg',conf_thres=0.4)
     # res3 = model.detect(source='..\\tello_tt_yolov5\\img\\1.3-1.jpg',conf_thres=0.4)
     # res4 = model.detect(source='..\\tello_tt_yolov5\\img\\1.3-2.jpg',conf_thres=0.4)
     # res5 = model.detect(source='..\\tello_tt_yolov5\\img\\1.3-3.jpg',conf_thres=0.4)
-    print(res1)
+    # print(res1)
     # print(res2)
     # print(res3)
     # print(res4)

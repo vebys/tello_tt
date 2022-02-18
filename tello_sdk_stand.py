@@ -221,13 +221,13 @@ class Start:
     #         print('停止取流')
     #     print('外层循环结束')
 
-    def take_photo(self, pre='dj', name='', num=2):
+    def take_photo(self, pre='dj', name='', num=2,wtime=0.5):
         """拍照函数，你要初始化中，初始化取流信息，self.camera_obj.start_video_stream(display=False)"""
         print('拍照开始')
         if name == '':
             name = f"{pre}-{int(time.time())}-{random.randint(10, 100)}-"
         for i in range(num):
-            time.sleep(1)
+            time.sleep(wtime)
             print('准备拍照')
             img = self.camera_obj.read_cv2_image(strategy='newest')
             img_path = f'./img/{name}{i}.jpg'
