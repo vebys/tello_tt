@@ -85,7 +85,7 @@ def get_qi_info(model,img_path):
 
 def get_quan_info(model,img_path):
     result = dict()
-    res1 = model.detect(source=img_path,conf_thres=0.3)
+    res1 = model.detect(source=img_path,conf_thres=0.8)
     # res1 = model.detect(source='..\\tello_tt_yolov5\\img\\1.2.jpg',conf_thres=0.4)
     # res2 = model.detect(source='..\\tello_tt_yolov5\\img\\1.2-2.jpg',conf_thres=0.4)
     # res3 = model.detect(source='..\\tello_tt_yolov5\\img\\1.3-1.jpg',conf_thres=0.4)
@@ -110,6 +110,9 @@ def get_quan_info(model,img_path):
         if quan:
             """w=48"""
             # f = (p*d)/w #f:焦距，p实物在图片中的像素，d:摄像头距离实物的距离，w:物体实际宽度cm
+            f = (quan['x2y2'][0] - quan['x1y1'][0])*120/48
+            print('焦距：',f)
+            return f
             f = 391.67
             # dis = (w*f)/p1 # w:物体实际宽度cm ，f：焦距, p1物体在图片中的像素宽度
             dis = (48*f)/(quan['x2y2'][0]-quan['x1y1'][0])
