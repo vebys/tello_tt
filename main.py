@@ -1,9 +1,9 @@
 from tello_sdk_stand import *
-from yolov5master.detect import DetectApi
-from yolov5master.tt_api import get_qi_info,get_quan_info
+from yolov5_new.detect import DetectApi
+from yolov5_new.tt_api import get_qi_info,get_quan_info
 import time, sys
 
-model = DetectApi(weights=['.\\weights\\best.pt'], nosave=False)
+model = DetectApi(weights=['.\\yolov5_new\\weights\\best.pt'], nosave=False)
 dj = Start()  # 初始化飞机对象
 
 # try:
@@ -79,7 +79,7 @@ try:
     else:
         # code 为err
         if not qi_info['finish']:
-            print('未检测到旗子，想右 向后飞行后再试')
+            print('未检测到圈，想右 向后飞行后再试')
             dj.back(40)
             dj.left(40)
             img_path = dj.take_photo(num=2)

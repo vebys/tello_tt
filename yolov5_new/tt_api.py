@@ -1,7 +1,7 @@
 from detect import DetectApi
 import time , operator
 
-model = DetectApi(weights=['weights\\best.pt'], nosave=False)
+# model = DetectApi(weights=['weights\\best.pt'], nosave=False)
 
 
 
