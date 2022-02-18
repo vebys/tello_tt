@@ -8,7 +8,7 @@ print('识别模型加载完毕')
 dj = Start()  # 初始化飞机对象
 dj.take_off()  # 起飞
 dj.up(30)
-for i in range(20):
+for i in range(6):
     print(f'第{i}次跟踪')
     try:
 

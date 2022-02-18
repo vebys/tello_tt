@@ -110,10 +110,11 @@ def get_quan_info(model,img_path):
         if quan:
             """w=48"""
             # f = (p*d)/w #f:焦距，p实物在图片中的像素，d:摄像头距离实物的距离，w:物体实际宽度cm
-            f = (quan['x2y2'][0] - quan['x1y1'][0])*120/48
-            print('焦距：',f)
-            return f
-            f = 391.67
+            # f = (quan['x2y2'][0] - quan['x1y1'][0])*180/48
+            # print('焦距：',f)
+            # return f
+            # [830.26,862.5,969,847,1036,928,1000,929,1042]
+            f = 945
             # dis = (w*f)/p1 # w:物体实际宽度cm ，f：焦距, p1物体在图片中的像素宽度
             dis = (48*f)/(quan['x2y2'][0]-quan['x1y1'][0])
             result['dis_forward'] = dis # 距离圈的距离
