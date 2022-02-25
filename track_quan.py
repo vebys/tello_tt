@@ -1,6 +1,6 @@
 from tello_sdk_stand import *
 from yolov5_new.detect import DetectApi
-from yolov5_new.tt_api import get_qi_info,get_quan_info
+from yolov5_new.tt_api import get_qi_info, get_quan_info
 import time, sys
 
 model = DetectApi(weights=['.\\yolov5_new\\weights\\best.pt'], nosave=False)
@@ -8,7 +8,7 @@ print('识别模型加载完毕')
 dj = Start()  # 初始化飞机对象
 dj.take_off()  # 起飞
 dj.up(30)
-for i in range(6):
+for i in range(30):
     print(f'第{i}次跟踪')
     try:
 
@@ -16,19 +16,24 @@ for i in range(6):
 
         # dj.take_photo()
         # time.sleep(2)
-        img_path = dj.take_photo(num=2)
-        print('图片路径：',img_path)
-        qi_info = get_quan_info(model,img_path)
+        img_path = dj.take_photo(num=1)
+        print('图片路径：', img_path)
+        qi_info = get_quan_info(model, img_path)
         print(qi_info)
+        stand_forward_distance = 300
         if qi_info['code'] == 'action':
-            dj.fly(direction=qi_info['direction'],distance=qi_info['distance'])
+            dj.fly(direction=qi_info['direction'], distance=qi_info['distance'])
+            if qi_info['dis_forward'] > 400:
+                dj.fly('forward', int(qi_info['dis_forward'] - stand_forward_distance))
             if not qi_info['finish']:
-                img_path =dj.take_photo(num=2)
+                img_path = dj.take_photo(num=1)
                 qi_info = get_quan_info(model, img_path)
                 dj.fly(direction=qi_info['direction'], distance=qi_info['distance'])
                 print('需要再次调用拍照定位')
         elif qi_info['code'] == 'no action':
             print('无需调整位置')
+            if qi_info['dis_forward'] > 400:
+                dj.fly('forward', int(qi_info['dis_forward'] - stand_forward_distance))
         else:
             # code 为err
             if not qi_info['finish']:
@@ -42,17 +47,17 @@ for i in range(6):
                 if qi_info['code'] == 'action':
                     dj.fly(direction=qi_info['direction'], distance=qi_info['distance'])
                     if not qi_info['finish']:
-                        img_path = dj.take_photo(num=2)
+                        img_path = dj.take_photo(num=1)
                         qi_info = get_quan_info(model, img_path)
                         dj.fly(direction=qi_info['direction'], distance=qi_info['distance'])
             else:
-                print('代码有bug:',qi_info['code'])
+                print('代码有bug:', qi_info['code'])
 
-        dj.take_photo(num=1)
+        # dj.take_photo(num=1)
         # time.sleep(1)
         # dj.take_photo()
 
-        i+=1
+        i += 1
 
 
     except Exception as e:
