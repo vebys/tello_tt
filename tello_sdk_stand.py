@@ -239,7 +239,7 @@ class Start:
         return img_path
 
     def get_dist(self, num=3, wtime=0.2):
-        """获取距离
+        """获取距离,返回值大于780可能不准确
         :param  num 测距次数
         :param  间隔时间
         :return 返还平均距离
@@ -390,8 +390,7 @@ def get_qi_loc(model, dj, x_step=-40, y_step=-40, try_num=10, take_photo_num=1):
     elif qi_info['code'] == 'no action':
         result['code'] = 'found'
         result['msg'] = '找到旗子位置'
-        result['direction'] = qi_info['direction']
-        result['distance'] = qi_info['distance']
+        result['distance'] = qi_info['distance']  # 左手法则，负数向左飞，正数向右飞
         result['dis_forward'] = qi_info['dis_forward']
         print('无需调整位置')
     else:
