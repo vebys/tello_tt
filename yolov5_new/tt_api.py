@@ -40,6 +40,7 @@ def get_qi_info(model, img_path):
                 result['direction'] = 'left'
                 result['distance'] = 30
                 result['finish'] = False
+                result['dis_forward'] = 0
                 result['msg'] = '旗子在左边界，测量可能不准确，需向 左  飞行后重新拍照计算'
                 return result
             elif int(qi['src_img_size'][1]) == (qi['x2y2'][0]):
@@ -47,11 +48,14 @@ def get_qi_info(model, img_path):
                 result['direction'] = 'right'
                 result['distance'] = 30
                 result['finish'] = False
+                result['dis_forward'] = 0
                 result['msg'] = '旗子在右边界，测量可能不准确，需向  右  飞行重新拍照计算'
                 return result
+            # 计算距离旗子中心的距离
             diff = (qi['src_img_size'][1] - qi['x2y2'][0] - qi['x1y1'][0]) / 2
             diff = int(diff * dis_cm)
             print('diff:: ', diff)
+            result['distance'] = abs(diff)
             if abs(diff) < 20:
                 result['finish'] = True
                 result['code'] = 'no action'
@@ -65,7 +69,6 @@ def get_qi_info(model, img_path):
                     result['direction'] = 'right'
                     result['msg'] = f'需向右飞{diff}'
                 result['code'] = 'action'
-                result['distance'] = abs(diff)
                 result['finish'] = True
                 # print('向右飞')
         else:

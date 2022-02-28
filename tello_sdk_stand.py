@@ -24,8 +24,10 @@ from robomaster import robot, protocol, logger
 from robomaster import camera
 import time
 
-
 # Press the green button in the gutter to run the script.
+from yolov5_new.tt_api import get_qi_info
+
+
 class Start:
     def __init__(self):
         self.t1_drone = robot.Drone()
@@ -170,8 +172,8 @@ class Start:
                :param: retry: bool:是否重发命令
                :return: action对象
                """
-        res =   self.flight_obj.go(x=x, y=y, z=z, speed=speed, mid=mid, retry=retry)
-        print('tello_sdk_stand.go()::res:::::res::::',res)
+        res = self.flight_obj.go(x=x, y=y, z=z, speed=speed, mid=mid, retry=retry)
+        print('tello_sdk_stand.go()::res:::::res::::', res)
         return res
 
     def go(self, x, y, z, speed=10, mid=None):
@@ -181,7 +183,7 @@ class Start:
         if mid:
             cmd += " {0}".format(mid)
         # return  self.flight_obj.command(cmd)
-        return  self.command(cmd)
+        return self.command(cmd)
 
     def reverse(self, angle=0, retry=True):
         """ 控制飞机旋转指定角度
@@ -221,7 +223,7 @@ class Start:
     #         print('停止取流')
     #     print('外层循环结束')
 
-    def take_photo(self, pre='dj', name='', num=2,wtime=0.5):
+    def take_photo(self, pre='dj', name='', num=2, wtime=0.5):
         """拍照函数，你要初始化中，初始化取流信息，self.camera_obj.start_video_stream(display=False)"""
         print('拍照开始')
         if name == '':
@@ -252,7 +254,7 @@ class Start:
         l_dis.pop(0)
         l_dis.pop(-1)
         for i in l_dis:
-            sum_dis+=i
+            sum_dis += i
         avg_dis = int((sum_dis / len(l_dis)) / 10)
         print('平均距离:', avg_dis)
         return avg_dis
@@ -358,6 +360,60 @@ def qi_loc(task, step=0, x=0, step_y=0, move_y_status=False):
         else:
             print(f'定位失败，位置异常，当前位置：{x},当前移动次数{step}')
             return [False, 900]
+
+
+def get_qi_loc(model, dj, x_step=-40, y_step=-40, try_num=10, take_photo_num=1):
+    """旗子定位
+    model: 旗子识别模型
+    dj:飞机对象
+    x_step:x每次向x方向移动的距离，左手法则，负数向左移动
+    y_step：每次前后移动的距离， 左手法则
+    try_num:寻找旗子的次数
+    take_photo_num:拍张张数
+    返回：未找到返回not found ,找到后返旗子相对飞机的，前方距离，和飞机左右方向距离
+    """
+    try_num = try_num - 1
+    result = dict()
+    result['code'] = 'not found'
+    img_path = dj.take_photo(num=take_photo_num)
+    print('图片路径：', img_path)
+    qi_info = get_qi_info(model, img_path)
+    print(qi_info)
+    if qi_info['code'] == 'action':
+        dj.fly(direction=qi_info['direction'], distance=qi_info['distance'])
+        if not qi_info['finish']:
+            # img_path = dj.take_photo(num=take_photo_num)
+            # qi_info = get_qi_info(model, img_path)
+            # dj.fly(direction=qi_info['direction'], distance=qi_info['distance'])
+            print('需要再次调用拍照定位')
+            get_qi_loc(model, dj, x_step, y_step, try_num=try_num, take_photo_num=1)
+    elif qi_info['code'] == 'no action':
+        result['code'] = 'found'
+        result['msg'] = '找到旗子位置'
+        result['direction'] = qi_info['direction']
+        result['distance'] = qi_info['distance']
+        result['dis_forward'] = qi_info['dis_forward']
+        print('无需调整位置')
+    else:
+        # code 为err
+        if not qi_info['finish'] and try_num > 0:
+            print('未检测到旗子，想右 向后飞行后再试')
+            if abs(x_step) >= 20:
+                # 左手法则，负数向左飞
+                if try_num % 4 == 0:
+                    # 每4次调整一次方向
+                    x_step = -x_step
+                x_direction = 'left' if x_step < 0 else 'right'
+                dj.fly(direction=x_direction, distance=x_step)
+            if abs(y_step) >= 20 and try_num % 4 == 0:
+                # 左手法则，正数数向前飞，每四次调整一次前后位置，默认向后
+                y_direction = 'back' if y_step < 0 else 'forward'
+                dj.fly(direction=y_direction, distance=y_step)
+            get_qi_loc(model, dj, x_step, y_step, try_num=try_num, take_photo_num=1)
+        else:
+            logger.warning('尝试次数已用完，未找到旗子')
+            logger.warning(qi_info)
+    return result
 
 
 def gan_loc(task, step, x):
