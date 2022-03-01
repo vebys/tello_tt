@@ -111,11 +111,11 @@ class Start:
                 :param:force:True强制飞行，False 安全飞行
                 :return: action对象
                 """
-        # cur_dist = self.get_dist()
-        # if cur_dist < 15 or cur_dist < distance:
-        #     self.land()
-        #     raise NameError('前方安全距离不足无法飞行，已自动降落！！！')
-        #     sys.exit()
+        cur_dist = self.get_dist()
+        if cur_dist < 15 or cur_dist < distance:
+            self.land()
+            raise NameError('前方安全距离不足无法飞行，已自动降落！！！')
+            sys.exit()
 
         # time.sleep(1)
         self.flight_obj.forward(distance=distance, retry=retry).wait_for_completed(5)

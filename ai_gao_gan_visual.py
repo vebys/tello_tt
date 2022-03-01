@@ -23,11 +23,11 @@ try:
     # dj.led_obj.set_mled_sc()  # 关闭LED灯，节约用电
     dj.take_off()  # 起飞
     mon_status = False
-    # res = dj.command('mon')  # 打开识别定位卡功能
-    # if 'error' in res:
-    #     logger.warm('打开识别定位卡功能')
-    #     mon_status = False
-    # res2 = dj.command('mdirection 0')  # 设置定位卡为下视识别
+    res = dj.command('mon')  # 打开识别定位卡功能
+    if 'error' in res:
+        logger.warm('打开识别定位卡功能')
+        mon_status = False
+    res2 = dj.command('mdirection 0')  # 设置定位卡为下视识别
 
 
     dj.down(20)  # 下降高度
@@ -58,12 +58,12 @@ try:
     """绕旗杆"""
 
     #  检测前方是否由旗杆如果有先向左飞50厘米，然后根据情况计算向前飞距离
-    # juli = dj.get_dist()  # 监测前方是否有障碍物
+    juli = dj.get_dist()  # 监测前方是否有障碍物
     qian_jin_ju_li = 180  # 设置标桩前进距离
-    # if juli < 780:  # 若果前方有障碍物
-    #     dj.left(50)  # 向左移动，避开障碍物
-    #     if juli < 200:
-    #         qian_jin_ju_li = juli + 60  # 前进距离等于 距离障碍物的距离+60
+    if juli < 780:  # 若果前方有障碍物
+        dj.left(50)  # 向左移动，避开障碍物
+        if juli < 200:
+            qian_jin_ju_li = juli + 60  # 前进距离等于 距离障碍物的距离+60
     dj.forward(qian_jin_ju_li)  # 向前进
 
     dj.reverse(180)  # 调头
