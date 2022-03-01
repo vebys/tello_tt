@@ -2,7 +2,7 @@ import time
 import datetime
 import random
 from yolov5_new.detect import DetectApi
-# from yolov5_new.tt_api import get_qi_info, get_quan_info
+# from yolov5_new.tt_api import get_qi_warm, get_quan_warm
 from  tello_sdk_stand import *
 from robomaster import led
 import sys
@@ -13,20 +13,20 @@ import cv2
 
 
 model = DetectApi(weights=['.\\yolov5_new\\weights\\best.pt'], nosave=False)
-logger.info('识别模型加载完毕')
+logger.warm('识别模型加载完毕')
 dj = Start()
 
 
 
 try:
     """起飞"""
-    dj.led_obj.set_mled_sc()  # 关闭LED灯，节约用电
+    # dj.led_obj.set_mled_sc()  # 关闭LED灯，节约用电
     dj.take_off()  # 起飞
-    mon_status = True
-    res = dj.command('mon')  # 打开识别定位卡功能
-    if 'error' in res:
-        logger.info('打开识别定位卡功能')
-        mon_status = False
+    mon_status = False
+    # res = dj.command('mon')  # 打开识别定位卡功能
+    # if 'error' in res:
+    #     logger.warm('打开识别定位卡功能')
+    #     mon_status = False
     # res2 = dj.command('mdirection 0')  # 设置定位卡为下视识别
 
 
@@ -39,7 +39,9 @@ try:
     dj.forward(230)  # 过矮门
 
     dj.up(70)  # 上升高度 准备过高门
+    dj.take_photo(pre='gan1')
     dj.forward(210)  # 过高门
+    dj.take_photo(pre='gan2')
 
 
 
@@ -56,31 +58,32 @@ try:
     """绕旗杆"""
 
     #  检测前方是否由旗杆如果有先向左飞50厘米，然后根据情况计算向前飞距离
-    juli = dj.get_dist()  # 监测前方是否有障碍物
+    # juli = dj.get_dist()  # 监测前方是否有障碍物
     qian_jin_ju_li = 180  # 设置标桩前进距离
-    if juli < 780:  # 若果前方有障碍物
-        dj.left(50)  # 向左移动，避开障碍物
-        if juli < 200:
-            qian_jin_ju_li = juli + 60  # 前进距离等于 距离障碍物的距离+60
+    # if juli < 780:  # 若果前方有障碍物
+    #     dj.left(50)  # 向左移动，避开障碍物
+    #     if juli < 200:
+    #         qian_jin_ju_li = juli + 60  # 前进距离等于 距离障碍物的距离+60
     dj.forward(qian_jin_ju_li)  # 向前进
 
     dj.reverse(180)  # 调头
     # 开始寻找旗子
-    logger.info("开始寻找旗子")
+    logger.warm("开始寻找旗子")
     # 向左飞行  ！！可能需要调整
     dj.left(50)  # 向左飞行，  如果出现飞多了监测不到旗杆，需要减少
     dingwei_jieguo = get_qi_loc(model=model, dj=dj)  # 寻找旗杆的位置，先向左找,再向右找
-    logger.info("="*40)
+    logger.warm("="*40)
     print('定位结果::',dingwei_jieguo)
-    logger.info("=" * 40)
+    logger.warm("=" * 40)
     if dingwei_jieguo['code'] == 'found':
         # 定位成功
         # dj.down(70)  #
-        juli = dj.get_dist()
-        if juli >10 and juli <780:
-            target_dis = juli
-        else:
-            target_dis = dingwei_jieguo['dis_forward']
+        # juli = dj.get_dist()
+        # if juli >10 and juli <780:
+        #     target_dis = juli
+        # else:
+        #     target_dis = dingwei_jieguo['dis_forward']
+        target_dis = dingwei_jieguo['dis_forward']
         move_dis = -dingwei_jieguo['distance'] + 90  # 大小需要根据情况调整
         logger.warn(f'准备向左飞行：{move_dis}cm，绕旗杆')
         dj.left(move_dis)

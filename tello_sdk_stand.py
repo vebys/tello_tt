@@ -111,11 +111,11 @@ class Start:
                 :param:force:True强制飞行，False 安全飞行
                 :return: action对象
                 """
-        cur_dist = self.get_dist()
-        if cur_dist < 15 or cur_dist < distance:
-            self.land()
-            raise NameError('前方安全距离不足无法飞行，已自动降落！！！')
-            sys.exit()
+        # cur_dist = self.get_dist()
+        # if cur_dist < 15 or cur_dist < distance:
+        #     self.land()
+        #     raise NameError('前方安全距离不足无法飞行，已自动降落！！！')
+        #     sys.exit()
 
         # time.sleep(1)
         self.flight_obj.forward(distance=distance, retry=retry).wait_for_completed(5)
@@ -362,7 +362,7 @@ def qi_loc(task, step=0, x=0, step_y=0, move_y_status=False):
             return [False, 900]
 
 
-def get_qi_loc(model, dj, x_step=-40, y_step=-40, try_num=10, take_photo_num=1):
+def get_qi_loc(model, dj, x_step=-40, y_step=-40, try_num=10, take_photo_num=2):
     """旗子定位
     model: 旗子识别模型
     dj:飞机对象
@@ -376,6 +376,7 @@ def get_qi_loc(model, dj, x_step=-40, y_step=-40, try_num=10, take_photo_num=1):
     result = dict()
     result['code'] = 'not found'
     img_path = dj.take_photo(num=take_photo_num)
+    take_photo_num = 1
     print('图片路径：', img_path)
     qi_info = get_qi_info(model, img_path)
     print(qi_info)
@@ -403,11 +404,11 @@ def get_qi_loc(model, dj, x_step=-40, y_step=-40, try_num=10, take_photo_num=1):
                     # 每4次调整一次方向
                     x_step = -x_step
                 x_direction = 'left' if x_step < 0 else 'right'
-                dj.fly(direction=x_direction, distance=x_step)
+                dj.fly(direction=x_direction, distance=int(x_step))
             if abs(y_step) >= 20 and try_num % 4 == 0:
                 # 左手法则，正数数向前飞，每四次调整一次前后位置，默认向后
                 y_direction = 'back' if y_step < 0 else 'forward'
-                dj.fly(direction=y_direction, distance=y_step)
+                dj.fly(direction=y_direction, distance=int(y_step))
             get_qi_loc(model, dj, x_step, y_step, try_num=try_num, take_photo_num=1)
         else:
             logger.warning('尝试次数已用完，未找到旗子')
