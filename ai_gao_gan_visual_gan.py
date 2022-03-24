@@ -11,7 +11,7 @@ from yolov5_new.detect import DetectApi
 
 
 model = DetectApi(weights=['.\\yolov5_new\\weights\\best.pt'], nosave=False)
-logger.warm('识别模型加载完毕')
+# logger.warm('识别模型加载完毕')
 
 dj = Start()
 
@@ -38,7 +38,29 @@ try:
     dj.forward(230)  # 过矮门
 
     dj.up(70)  # 上升高度 准备过高门
-    dj.take_photo(pre='gao')
+    """
+    dingwei_jieguo = get_gan_loc(model,dj)
+    logger.warm("=" * 40)
+    print('定位结果::', dingwei_jieguo)
+    logger.warm("=" * 40)
+    if dingwei_jieguo['code'] == 'found':
+        # 定位成功
+        # dj.down(70)  #
+        # juli = dj.get_dist()
+        # if juli >10 and juli <780:
+        #     target_dis = juli
+        # else:
+        #     target_dis = dingwei_jieguo['dis_forward']
+        target_dis = dingwei_jieguo['dis_forward']
+        move_dis = -dingwei_jieguo['distance'] + 90  # 大小需要根据情况调整
+        logger.warn(f'准备向左飞行：{move_dis}cm，绕旗杆')
+        dj.left(move_dis)
+        dj.forward(int(target_dis + 210))  # 前进距离 = 距离旗杆距离 + 80
+    else:
+        # 定位失败，如果需要继续盲飞，请修改此处,可以加定位卡
+        # raise NameError('找旗杆失败，请求降落')
+        print('找旗杆失败，继续飞行')
+    """
     dj.forward(210)  # 过高门
     dj.take_photo(pre='gan')
 
@@ -51,12 +73,13 @@ try:
     dj.back(150)  # 向后飞
     # 绕杆结束，调整位置,准备绕第旗杆
     dj.right(260)
-
+    # raise NameError('调试结束')
 
 
     """绕旗杆"""
 
     #  检测前方是否由旗杆如果有先向左飞50厘米，然后根据情况计算向前飞距离
+
     juli = dj.get_dist()  # 监测前方是否有障碍物
     qian_jin_ju_li = 180  # 设置标桩前进距离
     if juli < 780:  # 若果前方有障碍物
@@ -66,17 +89,21 @@ try:
     dj.forward(qian_jin_ju_li)  # 向前进
 
     dj.reverse(180)  # 调头
+    dj.take_photo(pre='qi-1-')
     # 向左飞行  ！！可能需要调整
     dj.left(50)  # 向左飞行，  如果出现飞多了监测不到旗杆，需要减少
+    dj.take_photo(pre='qi-2-')
     dingwei_jieguo = qi_loc(dj)  # 寻找旗杆的位置，先向左找1.5米，前进90厘米，再向右边找
     if dingwei_jieguo[0]:
         # 定位成功
         # dj.down(70)  #
+        dj.take_photo(pre='qi-3-')
         dj.left(90)
         dj.forward(int(dingwei_jieguo[1] + 80))  # 前进距离 = 距离旗杆距离 + 80
     else:
         # 定位失败，如果需要继续盲飞，请修改此处,可以加定位卡
         raise NameError('找旗杆失败，请求降落')
+    dj.take_photo(pre='qi-4-')
     dj.right(170)  # 向右飞
     dj.forward(120)  # 向前飞
     dj.left(140)  # 向左飞    #原本 130
@@ -107,7 +134,8 @@ try:
                 else:
                     dj.back(30) # 找不到终点定位卡 向后退30准备降落
                 break
-
+            if i%3 == 0:
+                dj.back(20)
             if i < 3:
                 dj.right(50)
             else:

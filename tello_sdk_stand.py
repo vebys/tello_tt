@@ -25,7 +25,7 @@ from robomaster import camera
 import time
 
 # Press the green button in the gutter to run the script.
-from yolov5_new.tt_api import get_qi_info
+from yolov5_new.tt_api import get_qi_info, get_gan_info
 
 
 class Start:
@@ -362,6 +362,60 @@ def qi_loc(task, step=0, x=0, step_y=0, move_y_status=False):
             return [False, 900]
 
 
+def get_gan_loc(model, dj, x_step=-40, y_step=-20, try_num=10, take_photo_num=2):
+    """杆定位
+    model: 杆识别模型
+    dj:飞机对象
+    x_step:x每次向x方向移动的距离，左手法则，负数向左移动
+    y_step：每次前后移动的距离， 左手法则
+    try_num:寻找杆的次数
+    take_photo_num:拍张张数
+    返回：未找到返回not found ,找到后返杆相对飞机的，前方距离，和飞机左右方向距离
+    """
+    try_num = try_num - 1
+    result = dict()
+    result['code'] = 'not found'
+    img_path = dj.take_photo(num=take_photo_num)
+    take_photo_num = 1
+    print('图片路径：', img_path)
+    gan_info = get_gan_info(model, img_path)
+    print(gan_info)
+    if gan_info['code'] == 'action':
+        dj.fly(direction=gan_info['direction'], distance=gan_info['distance'])
+        if not gan_info['finish']:
+            # img_path = dj.take_photo(num=take_photo_num)
+            # gan_info = get_gan_info(model, img_path)
+            # dj.fly(direction=gan_info['direction'], distance=gan_info['distance'])
+            print('需要再次调用拍照定位')
+            get_gan_loc(model, dj, x_step, y_step, try_num=try_num, take_photo_num=1)
+    elif gan_info['code'] == 'no action':
+        result['code'] = 'found'
+        result['msg'] = '找到杆位置'
+        result['distance'] = gan_info['distance']  # 左手法则，负数向左飞，正数向右飞
+        result['dis_forward'] = gan_info['dis_forward']
+        print('无需调整位置')
+    else:
+        # code 为err
+        if not gan_info['finish'] and try_num > 0:
+            print('未检测到杆，想右 向后飞行后再试')
+            if abs(x_step) >= 20:
+                # 左手法则，负数向左飞
+                if try_num % 4 == 0:
+                    # 每4次调整一次方向
+                    x_step = -x_step
+                x_direction = 'left' if x_step < 0 else 'right'
+                dj.fly(direction=x_direction, distance=int(x_step))
+            if abs(y_step) >= 20 and try_num % 4 == 0:
+                # 左手法则，正数数向前飞，每四次调整一次前后位置，默认向后
+                y_direction = 'back' if y_step < 0 else 'forward'
+                dj.fly(direction=y_direction, distance=int(y_step))
+            get_gan_loc(model, dj, x_step, y_step, try_num=try_num, take_photo_num=1)
+        else:
+            logger.warning('尝试次数已用完，未找到杆')
+            logger.warning(gan_info)
+    return result
+
+
 def get_qi_loc(model, dj, x_step=-40, y_step=-40, try_num=10, take_photo_num=2):
     """旗子定位
     model: 旗子识别模型
@@ -414,6 +468,8 @@ def get_qi_loc(model, dj, x_step=-40, y_step=-40, try_num=10, take_photo_num=2):
             logger.warning('尝试次数已用完，未找到旗子')
             logger.warning(qi_info)
     return result
+
+
 
 
 def gan_loc(task, step, x):
