@@ -1,3 +1,4 @@
+import os
 import time
 import datetime
 import random
@@ -20,6 +21,7 @@ try:
     dj.led_obj.set_mled_sc()  # 关闭LED灯，节约用电
     dj.take_off()  # 起飞
     time.sleep(1)
+
     # print('第一次开始')
     # dj.go(x=100, y=100, z=30, speed=30)
     # print('第一次飞行完成' )
