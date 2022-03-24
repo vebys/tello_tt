@@ -39,9 +39,9 @@ try:
     dj.forward(230)  # 过矮门
 
     dj.up(70)  # 上升高度 准备过高门
-    dj.take_photo(pre='gan1')
+    dj.take_photo(pre='gao1-')
     dj.forward(210)  # 过高门
-    dj.take_photo(pre='gan2')
+    dj.take_photo(pre='ai1-')
 
 
 
