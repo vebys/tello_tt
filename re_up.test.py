@@ -44,7 +44,7 @@ try:
     dj.curve(x1=100, y1=100, z1=20, x2=200, y2=0, z2=40, speed=30)
     print("-" * 50)
     print('第1次结束')
-    dj.curve(x1=-100, y1=-100, z1=20, x2=-200, y2=0, z2=40, speed=30)
+    dj.curve(x1=-100, y1=-100, z1=20, x2=-180, y2=0, z2=40, speed=30)
     print("+" * 50)
     print('第2次结束')
     # dj.down(20)
