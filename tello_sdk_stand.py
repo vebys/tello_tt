@@ -83,7 +83,7 @@ class Start:
     def land(self):
         """降落"""
         print('收到降落指令！')
-        self.flight_obj.land().wait_for_completed(5)
+        self.flight_obj.land().wait_for_completed(15)
 
     def up(self, distance=0, retry=True):
         """ 向上飞distance厘米，指相对距离
@@ -92,7 +92,7 @@ class Start:
                 :param: retry: bool:是否重发命令
                 :return: action对象
                 """
-        self.flight_obj.up(distance=distance, retry=retry).wait_for_completed(5)
+        self.flight_obj.up(distance=distance, retry=retry).wait_for_completed(15)
 
     def down(self, distance=0, retry=True):
         """ 向下飞distance厘米，指相对距离
@@ -101,7 +101,7 @@ class Start:
         :param: retry: bool:是否重发命令
         :return: action对象
         """
-        self.flight_obj.down(distance=distance, retry=retry).wait_for_completed(5)
+        self.flight_obj.down(distance=distance, retry=retry).wait_for_completed(15)
 
     def forward(self, distance=0, retry=True, force=False):
         """ 向前飞行distance厘米，指相对距离
@@ -118,7 +118,7 @@ class Start:
             sys.exit()
 
         # time.sleep(1)
-        self.flight_obj.forward(distance=distance, retry=retry).wait_for_completed(5)
+        self.flight_obj.forward(distance=distance, retry=retry).wait_for_completed(15)
 
     def back(self, distance=0, retry=True):
         """ 向后飞行distance厘米， 指相对距离
@@ -127,7 +127,7 @@ class Start:
         :param: retry: bool:是否重发命令
         :return: action对象
         """
-        self.flight_obj.backward(distance=distance, retry=retry).wait_for_completed(5)
+        self.flight_obj.backward(distance=distance, retry=retry).wait_for_completed(15)
 
     def left(self, distance=0, retry=True):
         """ 向左飞行distance厘米， 指相对距离
@@ -136,7 +136,7 @@ class Start:
         :param: retry: bool:是否重发命令
         :return: action对象
         """
-        self.flight_obj.left(distance=distance, retry=retry).wait_for_completed(5)
+        self.flight_obj.left(distance=distance, retry=retry).wait_for_completed(15)
 
     def right(self, distance=0, retry=True):
         """ 向右飞行distance厘米， 指相对距离
@@ -145,7 +145,7 @@ class Start:
         :param: retry: bool:是否重发命令
         :return: action对象
         """
-        self.flight_obj.right(distance=distance, retry=retry).wait_for_completed(5)
+        self.flight_obj.right(distance=distance, retry=retry).wait_for_completed(15)
 
     def fly(self, direction='forward', distance=0, retry=True):
         """ 控制飞机向指定方向飞行指定距离。
@@ -156,9 +156,9 @@ class Start:
         :param: retry: bool:是否重发命令
         :return: action对象
         """
-        self.flight_obj.fly(direction=direction, distance=distance, retry=retry).wait_for_completed(5)
+        self.flight_obj.fly(direction=direction, distance=distance, retry=retry).wait_for_completed(15)
 
-    def go_sys(self, x, y, z, speed=10, mid=None, retry=True):
+    def go(self, x, y, z, speed=10, mid=None, retry=True):
         """ 控制飞机以设置速度飞向指定坐标位置
 
                注意， x,y,z 同时在-20~20时，飞机不会运动。当不使用挑战卡时，飞机所在位置为坐标系原点，飞机的前方为x轴正方向，飞机的左方为y轴的正方向
@@ -172,16 +172,46 @@ class Start:
                :param: retry: bool:是否重发命令
                :return: action对象
                """
-        res = self.flight_obj.go(x=x, y=y, z=z, speed=speed, mid=mid, retry=retry)
+        res = self.flight_obj.go(x=x, y=y, z=z, speed=speed, mid=mid, retry=retry).wait_for_completed(15)
         print('tello_sdk_stand.go()::res:::::res::::', res)
         return res
 
-    def go(self, x, y, z, speed=10, mid=None):
-        """发送自定义命令会返回，执行结果"""
+    def go_(self, x, y, z, speed=10, mid=None):
+        """本函数为自定义，非djsdk提供   发送自定义命令会返回，执行结果"""
+        print('调用自定义go函数,需要加等待')
         cmd = "go {0} {1} {2} {3}".format(x, y, z, speed)
 
         if mid:
             cmd += " {0}".format(mid)
+        # return  self.flight_obj.command(cmd)
+        return self.command(cmd)
+
+    def curve(self, x1=0, y1=0, z1=0, x2=0, y2=0, z2=0, speed=20, mid=None, retry=True):
+        """
+        本函数为自定义，非dj sdk提供
+        以设置速度飞弧线，经过对应坐标系中的(x1, y1, z1)点到（x2, y2, z2）点
+
+        如果选用mid参数，则对应坐标系为指定挑战卡的坐标系。不使用挑战卡时，飞机的前方为x轴正方向，飞机的左方为y轴的正方向
+        如果mid参数为默认值None,则为飞机自身坐标系
+        """
+        return self.flight_obj.curve(x1=x1, y1=y1, z1=z1, x2=x2, y2=y2, z2=z2, speed=speed, mid=mid, retry=retry).wait_for_completed(15)
+
+    def curve_(self, x1=0, y1=0, z1=0, x2=0, y2=0, z2=0, speed=20, mid=None):
+        """
+        print('调用自定义curve_函数,需要加等待')
+        本函数为自定义，非dj sdk提供
+        以设置速度飞弧线，经过对应坐标系中的(x1, y1, z1)点到（x2, y2, z2）点
+
+        如果选用mid参数，则对应坐标系为指定挑战卡的坐标系。不使用挑战卡时，飞机的前方为x轴正方向，飞机的左方为y轴的正方向
+        如果mid参数为默认值None,则为飞机自身坐标系
+        """
+        cmd = ""
+        if mid:
+            cmd = "curve {0} {1} {2} {3} {4} {5} {6} {7}".format(
+                x1, y1, z1, x2, y2, z2, speed, mid)
+        else:
+            cmd = "curve {0} {1} {2} {3} {4} {5} {6}".format(
+                x1, y1, z1, x2, y2, z2, speed)
         # return  self.flight_obj.command(cmd)
         return self.command(cmd)
 
@@ -192,7 +222,7 @@ class Start:
         :param: retry: bool:是否重发命令
         :return: action对象
         """
-        self.flight_obj.rotate(angle=angle, retry=retry).wait_for_completed(5)
+        self.flight_obj.rotate(angle=angle, retry=retry).wait_for_completed(15)
 
     def get_video(self):
         self.camera_obj.start_video_stream(display=True)
@@ -468,8 +498,6 @@ def get_qi_loc(model, dj, x_step=-40, y_step=-40, try_num=10, take_photo_num=2):
             logger.warning('尝试次数已用完，未找到旗子')
             logger.warning(qi_info)
     return result
-
-
 
 
 def gan_loc(task, step, x):
