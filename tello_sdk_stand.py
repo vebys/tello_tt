@@ -1,6 +1,6 @@
 # -*-coding:utf-8-*-
 # Copyright (c) 2020 DJI.
-# version 2022-03-24
+# version 2022-04-13
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
