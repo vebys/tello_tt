@@ -296,6 +296,30 @@ class Start:
         self.t1_drone.close()
 
 
+def cliff_loc(task,now_count=1, step_dis=30, retry_count=2):
+    """定位悬崖位置，无人机定位到离崖壁60cm-80cm"""
+
+    d1 = task.get_dist()
+    print('测出距离大小：', d1)
+    if d1 <= 70:
+        back_dis = int(70 - d1)
+        if back_dis >= 20:
+            task.back(back_dis)
+        else:
+            print('无需调整位置')
+    elif d1 < 120:
+        forward_dis = int(d1 - 70)
+        task.forward(forward_dis)
+    else:
+        print('距离超出测距范围，向前移动后再试')
+        task.forward(step_dis)
+        if now_count <= retry_count:
+            print('再次调用调整函数')
+            cliff_loc(task,now_count, step_dis=step_dis, retry_count=retry_count)
+    now_count += 1
+    print('调整完毕！')
+
+
 def qi_loc(task, step=0, x=0, step_y=0, move_y_status=False):
     """定位旗杆的位置
      :param move_y_status: y轴方向移动状态，移动后被设置为True
