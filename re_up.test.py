@@ -1,5 +1,3 @@
-from turtle import forward
-
 from img.tello_sdk_stand import *
 
 dj = Start()
@@ -15,21 +13,21 @@ try:
 
     # 环绕山峰
     # 飞到山峰前
-    dj.forward(220)
+    dj.forward(200)
     # 调整左右位置
-    dj.right(40)
-    dj.take_photo('before',num=4)
+    dj.right(30)
+    # dj.take_photo('before',num=4)
     # 下降高度
     dj.down(70)
     # 定位到距离悬崖60-80厘米的位置  ，智慧调整前后位置，不会调整左右
     cliff_loc(dj)
     # 悬停3秒
     time.sleep(3)
-    dj.take_photo('ing',num=4)
+    # dj.take_photo('ing',num=4)
 
     # 旋转360°
     dj.reverse(360)
-    dj.take_photo('after',num=4)
+    # dj.take_photo('after',num=4)
 
 
     # 飞跃悬崖
