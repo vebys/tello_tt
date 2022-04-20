@@ -1,4 +1,4 @@
-from img.tello_sdk_stand import *
+from tello_sdk_stand import *
 
 dj = Start()
 
@@ -9,7 +9,7 @@ try:
     time.sleep(1)
     # 螺旋上升
     dj.curve(x1=85, y1=35, z1=20, x2=170, y2=0, z2=30, speed=30)
-    dj.curve(x1=-85, y1=-35, z1=20, x2=-170, y2=20, z2=30, speed=30)
+    dj.curve(x1=-85, y1=-40, z1=20, x2=-170, y2=20, z2=30, speed=30)
 
     # 环绕山峰
     # 飞到山峰前
