@@ -309,7 +309,11 @@ def cliff_loc(task,now_count=1, step_dis=30, retry_count=2):
             print('无需调整位置')
     elif d1 < 120:
         forward_dis = int(d1 - 70)
-        task.forward(forward_dis)
+        if forward_dis >= 20:
+            task.forward(forward_dis)
+        else:
+            print('无需调整位置')
+
     else:
         print('距离超出测距范围，向前移动后再试')
         task.forward(step_dis)
