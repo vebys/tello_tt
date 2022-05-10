@@ -25,6 +25,7 @@ try:
     cliff_loc(dj)
     # 悬停3秒
     time.sleep(3)
+
     # dj.take_photo('ing',num=4)
     dj.reverse(360)  # 旋转360°
     # dj.take_photo('after',num=4)
