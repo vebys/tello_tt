@@ -16,6 +16,8 @@ try:
     dj.down(70) # 下降高度
     # 定位到距离悬崖60-80厘米的位置  ，智慧调整前后位置，不会调整左右
     cliff_loc(dj)
+
+
     # 悬停3秒
     time.sleep(3)
     # dj.take_photo('ing',num=4)
