@@ -12,4 +12,4 @@ print(res)  #显示检测结果
 
 效果如下：
 
-![](./yolov5_new/runs/detect/exp/20.jpg)
+![](yolov5_new/runs/detect/exp/20.jpg)
