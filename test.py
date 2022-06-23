@@ -1,20 +1,7 @@
-# 导入sdk
-from tello_sdk_stand import *
+from yolov5_new.detect import DetectApi
 
-# 拿到飞机控制权
-dj = Start()
-
-# 起飞
-dj.take_off()
-# 前 50  右50 后 100 降落     单位是厘米
-# 向前飞50
-dj.forward(50)
-# 向右飞50
-dj.right(50)
-# 向后飞100
-dj.back(100)
-# 降落
-dj.land()
-
-# 释放资源
-dj.close()
+model = DetectApi(weights=['.\\yolov5_new\\weights\\best.pt'], nosave=False)
+## 目标检测
+img_path = '.\\img\\20.jpg'  #待检测图片
+res = model.detect(source=img_path)
+print(res)  #显示检测结果
